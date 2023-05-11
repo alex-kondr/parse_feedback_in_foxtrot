@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Dict
 
 import requests
 from bs4 import BeautifulSoup
@@ -28,20 +28,10 @@ def get_product_name(url: str) -> str:
     return product_name
 
 
-def get_comments(url: str) -> List:
-    print("product_url: ", url)
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "lxml")
+def handler_comments(soup_comments: List, url: str) -> List[Dict]:
     comments = []
 
-    all_comments = soup.find("div", class_=re.compile("main-reviews__body"))
-
-    if not all_comments:
-        return comments
-
-    all_comments = all_comments.find_all("article")
-
-    for comment in all_comments:
+    for comment in soup_comments:
         author_name = comment.find(class_="product-comment__item-title").text.strip()
         grade = comment.find_all("i", class_="icon icon-star-filled icon_orange")
         date = comment.find("div", class_="product-comment__item-date").text.strip()
@@ -61,3 +51,16 @@ def get_comments(url: str) -> List:
     return comments
 
 
+def get_comments(url: str) -> List:
+
+    print("product_url: ", url)
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "lxml")
+    all_comments = soup.find("div", class_=re.compile("main-reviews__body"))
+
+    if not all_comments:
+        return []
+
+    soup_comments = all_comments.find_all("article")
+
+    return handler_comments(soup_comments, url)

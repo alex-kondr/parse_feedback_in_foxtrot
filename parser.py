@@ -23,7 +23,7 @@ args = parser.parse_args()
 
 def save_all_comments(path: Path, comments: List[Dict]) -> None:
     with open(f"{path}.json", mode="w", encoding="utf-8") as fd:
-        json.dump(comments, fd, ensure_ascii=False)
+        json.dump(comments, fd, ensure_ascii=False, indent=2)
 
 
 def main():
